@@ -60,6 +60,7 @@ function fabim_upload_action() {
 	$unencodedData=base64_decode($filteredData);
 	$originalName = basename(parse_url('image_marker.png', PHP_URL_PATH));
 	$tempName = tempnam('/tmp', 'php_files');
+	$tempName = realpath($tempName);
 	file_put_contents($tempName, $unencodedData);
 	$data = array();
 	$data['name'] = $originalName;
@@ -70,20 +71,19 @@ function fabim_upload_action() {
 
 	$_FILES['image'] = array(
         'name' => $originalName,
-        'type' => 'image/png',
+        'type' => 'image/jpeg',
         'tmp_name' => $tempName,
         'error' => 0,
         'size' => strlen($unencodedData),
     );
-	$movefile = wp_handle_upload($_FILES['image'], array( 'test_form' => false ));
+	$movefile = media_handle_sideload($_FILES['image'], 0);
 
-	if ($movefile) 
+	if ($movefile && !isset( $movefile['error'] )) 
     {
-        echo "a File is valid, and was successfully uploaded.\n";
-        var_dump( $movefile);
+         die('Done');
     } 
     else 
     {
-        echo "Possible file upload attack!\n";
+        _e('Failed to recreating image, please try again','fabric-marker');
     }
 }

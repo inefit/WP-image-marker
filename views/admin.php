@@ -89,6 +89,11 @@
 	</div>
 </div>
 
+<form method="POST" enctype="multipart/form-data" id="myForm">
+    <input type="hidden" name="action" value="fabim_upload" />
+    <input type="hidden" name="image" id="img_val" value="" />
+</form>
+
 <script type="text/javascript">
 	var file_frame;
 	var wp_media_post_id = 10; // Store the old id
@@ -100,6 +105,7 @@
     });
 
     $('#submit_button').click(function(){
+      $('#submit_box_text').html("<?php _e('Please wait','fabric-marker') ?>");
       $('#submit_box').modal();
       $('#fabim_image_area').html2canvas({
           onrendered: function (canvas) {
@@ -111,9 +117,21 @@
                 'image': _imageData
               };
 
+              /*
+              $('#myForm').attr('action',ajaxurl);
+              $('#img_val').val(_imageData);
+
+              $('#myForm').submit();
+              */
+              
               jQuery.post(ajaxurl, data, function(response) {
-                $('#submit_box_text').html(response)
+                $('#submit_box_text').html(response);
+                if(response == 'Done'){
+                  var _redirect = "<?php echo admin_url('upload.php') ?>";
+                  window.location.href = _redirect;
+                }
               });
+              
           }
       });
     })

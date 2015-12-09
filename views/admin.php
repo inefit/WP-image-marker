@@ -74,7 +74,7 @@
           <div id="submit_box" style="display:none;" class="modal">
                <div align="center">
                    <img src="<?php echo plugin_dir_url( dirname(__FILE__ ) ) ?>/assets/images/loading.gif" />
-                   Please wait 
+                   <span id="submit_box_text"><?php _e('Please wait','fabric-marker'); ?></span>
                </div>
           </div>
         </p>
@@ -105,6 +105,15 @@
           onrendered: function (canvas) {
               //Set hidden field's value to image data (base-64 string)
               var _imageData = canvas.toDataURL("image/png");
+
+              var data = {
+                'action': 'fabim_upload',
+                'image': _imageData
+              };
+
+              jQuery.post(ajaxurl, data, function(response) {
+                $('#submit_box_text').html(response)
+              });
           }
       });
     })
